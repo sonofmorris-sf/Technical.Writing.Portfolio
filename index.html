@@ -2,566 +2,479 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#1a1a1e" />
-<title>BoxVault — Storage Inventory</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='28'%3E%F0%9F%93%A6%3C/text%3E%3C/svg%3E" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Michaela Morrison — Technical Writing</title>
+<meta name="description" content="Senior technical writer — 15+ years across Cisco, Google, Oracle, and Pivotal. Currently focused on AI." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:#1a1a1e; --surface:#232328; --surface2:#2c2c33; --border:#3a3a44;
-    --text:#e8e6e1; --textSub:#9c9a94; --accent:#e8a832; --danger:#d44; --green:#4a9;
-    --font: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    --bg: #0e0d0b;
+    --bg-elev: #16140f;
+    --ink: #efe9d9;
+    --ink-dim: #a39c87;
+    --ink-faint: #5c5749;
+    --rule: #2a2620;
+    --accent: #ffb547;
+    --accent-soft: #ffb54718;
+    --serif: 'Fraunces', Georgia, serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
   }
-  *{box-sizing:border-box;} html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;min-height:100vh;}
-  button{font-family:inherit;cursor:pointer;}
-  input,select,textarea{font-family:inherit;}
-  header{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;padding-top:env(safe-area-inset-top);}
-  .header-inner{max-width:900px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-  .logo{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
-  .logo-icon{font-size:22px;color:var(--accent);}
-  .logo-text{font-size:16px;font-weight:800;letter-spacing:3px;color:var(--accent);}
-  nav{display:flex;gap:4px;flex-wrap:wrap;}
-  nav button{background:none;border:none;color:var(--textSub);font-size:12px;padding:6px 10px;border-radius:8px;transition:all .15s;}
-  nav button.active{background:var(--accent);color:var(--bg);font-weight:700;}
-  main{max-width:900px;margin:0 auto;padding:16px;}
-  h2{font-size:20px;font-weight:800;letter-spacing:1px;margin:0 0 16px;}
-  h3{font-size:14px;font-weight:700;letter-spacing:1px;margin:24px 0 12px;color:var(--textSub);text-transform:uppercase;}
-  .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:8px;}
-  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;}
-  .stat-num{font-size:28px;font-weight:800;color:var(--accent);}
-  .stat-label{font-size:11px;color:var(--textSub);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
-  .unit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;}
-  .unit-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;cursor:pointer;}
-  .unit-letter{font-size:32px;font-weight:900;color:var(--accent);letter-spacing:2px;}
-  .unit-count{font-size:13px;color:var(--textSub);margin-top:4px;}
-  .unit-bar{height:4px;background:var(--surface2);border-radius:2px;margin-top:10px;overflow:hidden;}
-  .unit-bar-fill{height:100%;background:var(--accent);transition:width .3s;}
-  .empty{text-align:center;padding:40px 20px;color:var(--textSub);}
-  .empty-icon{font-size:48px;margin-bottom:12px;}
-  .filter-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center;}
-  input[type=text],input[type=date],textarea,select{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;outline:none;}
-  input[type=text].full,input[type=date].full,textarea.full,select.full{width:100%;}
-  input[type=text]{flex:1 1 180px;}
-  .result-count{font-size:11px;color:var(--textSub);margin-bottom:10px;letter-spacing:1px;text-transform:uppercase;}
-  .box-list{display:flex;flex-direction:column;gap:8px;}
-  .box-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;gap:12px;align-items:flex-start;}
-  .box-qr{width:56px;height:56px;border-radius:4px;background:#fff;padding:2px;flex-shrink:0;}
-  .box-qr img{width:100%;height:100%;display:block;}
-  .box-center{flex:1;min-width:0;}
-  .box-id{font-size:16px;font-weight:800;letter-spacing:2px;color:var(--accent);}
-  .box-contents{font-size:13px;margin-top:2px;word-break:break-word;}
-  .box-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center;}
-  .tag{font-size:10px;padding:2px 8px;border-radius:4px;background:var(--surface2);color:var(--textSub);text-transform:uppercase;letter-spacing:.5px;}
-  .tag.prio-need-soon{background:#d4432a22;color:#f66;}
-  .tag.prio-occasional{background:#e8a83222;color:var(--accent);}
-  .tag.prio-long-term{background:#4a922822;color:var(--green);}
-  .box-notes{font-size:11px;color:var(--textSub);margin-top:4px;font-style:italic;}
-  .box-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
-  .icon-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--textSub);}
-  .icon-btn.danger{color:var(--danger);}
-  .form-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;}
-  .form-preview{text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);}
-  .form-qr{width:140px;height:140px;border-radius:6px;background:#fff;padding:4px;display:inline-block;}
-  .form-qr img{width:100%;height:100%;display:block;}
-  .form-preview-id{font-size:22px;font-weight:900;letter-spacing:3px;color:var(--accent);margin-top:8px;}
-  .form-preview-url{font-size:10px;color:var(--textSub);margin-top:4px;word-break:break-all;}
-  .field{margin-bottom:14px;}
-  .field-row{display:flex;gap:12px;flex-wrap:wrap;}
-  .field-row .field{flex:1 1 45%;}
-  label{display:block;font-size:11px;color:var(--textSub);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
-  .unit-picker{display:flex;gap:6px;}
-  .unit-picker-btn{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:16px;font-weight:700;color:var(--textSub);text-align:center;}
-  .unit-picker-btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent);}
-  .unit-picker-count{font-size:10px;font-weight:400;opacity:.7;}
-  .form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
-  .btn-primary{background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;letter-spacing:1px;}
-  .btn-primary:disabled{opacity:.4;cursor:not-allowed;}
-  .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 20px;font-size:13px;}
-  .btn-secondary:disabled{opacity:.4;cursor:not-allowed;}
-  .label-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:12px;}
-  .label-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:10px;text-align:center;cursor:pointer;}
-  .label-card.selected{border-color:var(--accent);background:var(--surface2);}
-  .label-check{font-size:16px;margin-bottom:4px;color:var(--accent);}
-  .label-qr{width:72px;height:72px;margin:0 auto;background:#fff;padding:2px;border-radius:4px;}
-  .label-qr img{width:100%;height:100%;display:block;}
-  .label-id{font-size:13px;font-weight:800;letter-spacing:1.5px;margin-top:4px;color:var(--accent);}
-  .label-cat{font-size:10px;color:var(--textSub);text-transform:uppercase;}
-  .scan-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;text-align:center;}
-  .scan-icon{font-size:48px;margin-bottom:8px;}
-  .help-text{font-size:12px;color:var(--textSub);margin-bottom:12px;}
-  .lookup-row{display:flex;gap:8px;max-width:400px;margin:0 auto;}
-  .lookup-not-found{margin-top:16px;padding:12px;background:#d4432a22;border-radius:8px;color:#f66;}
-  .lookup-found{margin-top:16px;text-align:left;padding:16px;background:var(--surface2);border-radius:8px;}
-  .lookup-header{display:flex;gap:12px;align-items:center;margin-bottom:12px;}
-  .lookup-qr{width:72px;height:72px;background:#fff;padding:2px;border-radius:4px;flex-shrink:0;}
-  .lookup-qr img{width:100%;height:100%;}
-  .lookup-details{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;color:var(--textSub);margin-bottom:12px;}
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--bg);padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;letter-spacing:1px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.4);}
-  ol{text-align:left;max-width:400px;margin:0 auto 16px;line-height:1.8;color:var(--textSub);padding-left:20px;}
-  .hidden{display:none !important;}
-  textarea{resize:vertical;min-height:60px;}
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.08;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* ── header bar ─────────────────────────────────── */
+  header.bar {
+    border-bottom: 1px solid var(--rule);
+    padding: 22px 0;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  header.bar .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+  }
+  header.bar .mark { color: var(--ink); }
+  header.bar .meta { display: flex; gap: 32px; }
+  header.bar .meta span::before {
+    content: '◦ ';
+    color: var(--accent);
+  }
+  @media (max-width: 720px) {
+    header.bar .meta { display: none; }
+  }
+
+  /* ── hero ───────────────────────────────────────── */
+  .hero {
+    padding: 120px 0 100px;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+  }
+  .hero .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .hero .label::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(48px, 8vw, 112px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 28px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+  .hero .lede {
+    max-width: 640px;
+    font-size: 20px;
+    line-height: 1.55;
+    color: var(--ink-dim);
+    margin-bottom: 48px;
+  }
+  .hero .lede strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* stat strip */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--rule);
+    padding-top: 36px;
+  }
+  .stats div {
+    border-left: 1px solid var(--rule);
+    padding: 0 24px;
+    font-family: var(--mono);
+  }
+  .stats div:first-child { border-left: none; padding-left: 0; }
+  .stats .num {
+    display: block;
+    font-family: var(--serif);
+    font-size: 38px;
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stats .lbl {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  @media (max-width: 720px) {
+    .stats { grid-template-columns: repeat(2, 1fr); gap: 24px 0; }
+  }
+
+  /* ── section heading ────────────────────────────── */
+  .section-head {
+    padding: 80px 0 40px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 40px;
+  }
+  .section-head h2 {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .section-head h2::before {
+    content: '§ ';
+    color: var(--accent);
+  }
+  .section-head .count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── work list ──────────────────────────────────── */
+  .work { border-top: 1px solid var(--rule); }
+
+  .piece {
+    display: grid;
+    grid-template-columns: 80px 1fr 240px;
+    gap: 40px;
+    padding: 36px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    transition: background 0.4s ease;
+  }
+  .piece::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--accent-soft), transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+  .piece:hover::before { opacity: 1; }
+  .piece:hover .title { color: var(--accent); }
+  .piece:hover .arrow { transform: translateX(8px); color: var(--accent); }
+
+  .piece .num {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-faint);
+    letter-spacing: 0.05em;
+    padding-top: 6px;
+  }
+
+  .piece .body { position: relative; z-index: 1; }
+  .piece .title {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+    transition: color 0.3s ease;
+  }
+  .piece .desc {
+    color: var(--ink-dim);
+    font-size: 16px;
+    max-width: 560px;
+  }
+
+  .piece .meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
+    text-align: right;
+    position: relative;
+    z-index: 1;
+  }
+  .piece .meta div { padding: 3px 0; }
+  .piece .meta .k { color: var(--ink-faint); }
+  .piece .arrow {
+    display: inline-block;
+    margin-top: 14px;
+    color: var(--ink-faint);
+    font-size: 18px;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+
+  @media (max-width: 860px) {
+    .piece {
+      grid-template-columns: 50px 1fr;
+      gap: 20px;
+    }
+    .piece .meta {
+      grid-column: 2;
+      text-align: left;
+      margin-top: 6px;
+    }
+    .piece .title { font-size: 24px; }
+  }
+
+  /* ── about ──────────────────────────────────────── */
+  .about {
+    padding: 100px 0;
+    border-bottom: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 80px;
+  }
+  .about h3 {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .about h3::before { content: '§ '; color: var(--accent); }
+  .about .body p {
+    font-size: 19px;
+    line-height: 1.65;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+  .about .body p:last-child { color: var(--ink-dim); }
+  @media (max-width: 860px) {
+    .about { grid-template-columns: 1fr; gap: 24px; padding: 60px 0; }
+  }
+
+  /* ── footer ─────────────────────────────────────── */
+  footer {
+    padding: 60px 0 40px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  footer a {
+    color: var(--ink-dim);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  footer a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* entrance animation */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero .label { animation: rise 0.8s 0.1s both; }
+  .hero h1 { animation: rise 0.8s 0.2s both; }
+  .hero .lede { animation: rise 0.8s 0.4s both; }
+  .stats { animation: rise 0.8s 0.6s both; }
 </style>
 </head>
 <body>
-<header>
-  <div class="header-inner">
-    <div class="logo" data-view="dashboard"><span class="logo-icon">▣</span><span class="logo-text">BOXVAULT</span></div>
-    <nav id="nav"></nav>
+
+<header class="bar">
+  <div class="wrap row">
+    <div class="mark">M. MORRISON / TECHNICAL WRITING</div>
+    <div class="meta">
+      <span>Bay Area, CA</span>
+      <span>Available for contract</span>
+      <span>415.294.1061</span>
+      <span><a href="mailto:Michael.Morrison.Tech.Writer@gmail.com" style="color:inherit;text-decoration:none;">Michael.Morrison.Tech.Writer@gmail.com</a></span>
+    </div>
   </div>
 </header>
-<main id="main"></main>
-<div id="toast-host"></div>
-<script>
-/* ─── State & Storage ─── */
-const UNITS = ["186", "191", "199", "200"];
-const CATEGORIES = ["General","Kitchen","Clothes","Documents","Electronics","Holiday","Tools","Books","Furniture","Other"];
-const PRIORITIES = ["Long-term", "Occasional", "Need Soon"];
-const STORAGE_KEY = "boxvault.inventory.v1";
-let state = {
-  view: "dashboard",
-  boxes: [],
-  search: "",
-  filterUnit: "All",
-  filterCategory: "All",
-  selectedForPrint: new Set(),
-  editingId: null,
-  lookupResult: undefined,
-  lookupId: "",
-};
 
-function saveBoxes(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state.boxes)); } catch(e){ toast("⚠ Save failed"); } }
-function loadBoxes(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw) state.boxes = JSON.parse(raw); } catch(e){} }
+<section class="hero">
+  <div class="wrap">
+    <div class="label">Portfolio — Selected Work</div>
+    <h1>Documentation<br>for systems that <em>think,</em><br>scale, and ship.</h1>
+    <p class="lede">
+      Senior technical writer with <strong>15+ years</strong> across Cisco, Google, Oracle, and Pivotal. Specializing in API documentation, cloud infrastructure, and developer experience — currently focused on <strong>AI and RLHF</strong>.
+    </p>
+    <div class="stats">
+      <div><span class="num">15+</span><span class="lbl">Years writing</span></div>
+      <div><span class="num">04</span><span class="lbl">Tier-1 employers</span></div>
+      <div><span class="num">∞</span><span class="lbl">APIs documented</span></div>
+      <div><span class="num">AI</span><span class="lbl">Current focus</span></div>
+    </div>
+  </div>
+</section>
 
-/* ─── Helpers ─── */
-const $ = (sel, root=document) => root.querySelector(sel);
-const h = (tag, attrs={}, ...children) => {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k === "class") el.className = v;
-    else if (k === "style") el.style.cssText = v;
-    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
-    else if (v === true) el.setAttribute(k, "");
-    else if (v !== false && v != null) el.setAttribute(k, v);
-  }
-  for (const c of children.flat()) if (c != null) el.append(c.nodeType ? c : document.createTextNode(c));
-  return el;
-};
-function genId(unit, number){ return unit + "-" + String(number).padStart(3, "0"); }
-function nextNumber(unit){ const us = state.boxes.filter(b=>b.unit===unit); return us.length ? Math.max(...us.map(b=>b.number))+1 : 1; }
-function boxUrl(id){ return location.origin + location.pathname + "?id=" + encodeURIComponent(id); }
+<section class="work">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Selected Samples</h2>
+      <span class="count">05 / 05</span>
+    </div>
+  </div>
 
-/* ─── QR generation (uses global `qrcode` from CDN) ─── */
-const qrCache = new Map();
-function makeQrDataUrl(text, size = 200) {
-  const key = text + "@" + size;
-  if (qrCache.has(key)) return qrCache.get(key);
-  if (typeof window.qrcode !== "function") throw new Error("qrcode library not loaded");
-  const qr = window.qrcode(0, "M");
-  qr.addData(text);
-  qr.make();
-  const count = qr.getModuleCount();
-  const margin = 2;
-  const scale = Math.max(1, Math.floor(size / (count + margin * 2)));
-  const dim = (count + margin * 2) * scale;
-  const canvas = document.createElement("canvas");
-  canvas.width = canvas.height = dim;
-  const ctx = canvas.getContext("2d");
-  ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, dim, dim);
-  ctx.fillStyle = "#000";
-  for (let r=0; r<count; r++) for (let c=0; c<count; c++) {
-    if (qr.isDark(r, c)) ctx.fillRect((c+margin)*scale, (r+margin)*scale, scale, scale);
-  }
-  const url = canvas.toDataURL("image/png");
-  qrCache.set(key, url);
-  return url;
-}
-function qrImg(text, size){
-  const wrap = h("div");
-  try {
-    const url = makeQrDataUrl(text, size);
-    wrap.append(h("img", { src: url, alt: text, width: size, height: size, style: "width:100%;height:100%;display:block;" }));
-  } catch (e) {
-    wrap.append(h("div", { style: "font-size:10px;color:#900;padding:4px;text-align:center;" }, "QR offline"));
-  }
-  return wrap;
-}
+  <div class="wrap">
 
-/* ─── Toast ─── */
-let toastTimer;
-function toast(msg){
-  const host = $("#toast-host");
-  host.innerHTML = "";
-  host.append(h("div", { class: "toast" }, msg));
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => host.innerHTML = "", 2500);
-}
+    <a class="piece" href="Bare%20Metal%20and%20Virtual%20Machine%20DB%20Systems.pdf" target="_blank" rel="noopener">
+      <div class="num">01</div>
+      <div class="body">
+        <div class="title">Bare Metal &amp; Virtual Machine DB Systems</div>
+        <div class="desc">A conceptual overview of bare-metal and virtual-machine database systems — covering architecture trade-offs, deployment models, and the operational distinctions that matter to infrastructure teams.</div>
+        <span class="arrow">→ open pdf</span>
+      </div>
+      <div class="meta">
+        <div><span class="k">type /</span> overview</div>
+        <div><span class="k">domain /</span> cloud infra</div>
+        <div><span class="k">format /</span> pdf</div>
+      </div>
+    </a>
 
-/* ─── Views ─── */
-function renderNav(){
-  const nav = $("#nav"); nav.innerHTML = "";
-  const views = [["dashboard","Overview"],["list","Inventory"],["add","＋ Add"],["print","Print"],["scan","Scan"],["backup","Backup"]];
-  for (const [v, label] of views){
-    const b = h("button", { class: state.view===v?"active":"", onclick: () => setView(v) }, label);
-    nav.append(b);
-  }
-}
-function setView(v){ state.view = v; state.editingId = null; render(); }
+    <a class="piece" href="stadiumvision_mobile_sdk_guide.pdf" target="_blank" rel="noopener">
+      <div class="num">02</div>
+      <div class="body">
+        <div class="title">StadiumVision Mobile — SDK &amp; API Reference</div>
+        <div class="desc">A developer guide and API reference for the Cisco StadiumVision Mobile SDK. Onboarding, integration patterns, and a complete reference surface for the developers building against it.</div>
+        <span class="arrow">→ open pdf</span>
+      </div>
+      <div class="meta">
+        <div><span class="k">type /</span> sdk + api ref</div>
+        <div><span class="k">client /</span> cisco</div>
+        <div><span class="k">format /</span> pdf</div>
+      </div>
+    </a>
 
-function renderDashboard(){
-  const total = state.boxes.length;
-  const needSoon = state.boxes.filter(b=>b.priority==="Need Soon").length;
-  const cats = new Set(state.boxes.map(b=>b.category)).size;
-  const el = h("div", {},
-    h("h2", {}, "Storage Overview"),
-    h("div", { class: "stat-row" },
-      h("div", { class: "stat-card" }, h("div",{class:"stat-num"},String(total)), h("div",{class:"stat-label"},"Total Boxes")),
-      h("div", { class: "stat-card" }, h("div",{class:"stat-num"},String(UNITS.length)), h("div",{class:"stat-label"},"Units")),
-      h("div", { class: "stat-card" }, h("div",{class:"stat-num"},String(cats)), h("div",{class:"stat-label"},"Categories")),
-      h("div", { class: "stat-card" }, h("div",{class:"stat-num"},String(needSoon)), h("div",{class:"stat-label"},"Need Soon")),
-    ),
-    h("h3", {}, "By Unit"),
-    h("div", { class: "unit-grid" }, ...UNITS.map(u => {
-      const count = state.boxes.filter(b=>b.unit===u).length;
-      return h("div", { class:"unit-card", onclick: () => { state.filterUnit = u; setView("list"); } },
-        h("div", { class:"unit-letter" }, u),
-        h("div", { class:"unit-count" }, count + " boxes"),
-        h("div", { class:"unit-bar" }, h("div",{class:"unit-bar-fill", style:"width:"+Math.min(100,(count/50)*100)+"%"})),
-      );
-    })),
-    total === 0 ? h("div", { class:"empty" }, h("div",{class:"empty-icon"},"📦"), h("p",{},"No boxes yet. Tap ＋ Add to start cataloging.")) : null,
-  );
-  return el;
-}
+    <a class="piece" href="mx-series-fan-tray-power-supply-upgrade.pdf" target="_blank" rel="noopener">
+      <div class="num">03</div>
+      <div class="body">
+        <div class="title">MX Series — Power &amp; Cooling Upgrade Guide</div>
+        <div class="desc">Hardware upgrade procedures for power supplies and cooling systems on Juniper Networks MX Series routers. Step-by-step field instructions written for technicians working in live data-center environments.</div>
+        <span class="arrow">→ open pdf</span>
+      </div>
+      <div class="meta">
+        <div><span class="k">type /</span> hardware install</div>
+        <div><span class="k">client /</span> juniper networks</div>
+        <div><span class="k">format /</span> pdf</div>
+      </div>
+    </a>
 
-function renderList(){
-  const filtered = state.boxes.filter(b => {
-    if (state.filterUnit !== "All" && b.unit !== state.filterUnit) return false;
-    if (state.filterCategory !== "All" && b.category !== state.filterCategory) return false;
-    if (state.search){ const q = state.search.toLowerCase(); return b.id.toLowerCase().includes(q) || b.contents.toLowerCase().includes(q) || (b.notes||"").toLowerCase().includes(q); }
-    return true;
-  }).sort((a,b)=>a.id.localeCompare(b.id));
+    <a class="piece" href="Operations_Playbook_4-0.pdf" target="_blank" rel="noopener">
+      <div class="num">04</div>
+      <div class="body">
+        <div class="title">Game Day Operations Playbook</div>
+        <div class="desc">An operations playbook for Cisco StadiumVision game-day execution. Run-of-show, pre-event checks, in-game procedures, and incident response — written to be usable under pressure by venue operators.</div>
+        <span class="arrow">→ open pdf</span>
+      </div>
+      <div class="meta">
+        <div><span class="k">type /</span> playbook</div>
+        <div><span class="k">client /</span> cisco</div>
+        <div><span class="k">format /</span> pdf</div>
+      </div>
+    </a>
 
-  const prioClass = p => "tag prio-" + p.toLowerCase().replace(/\s+/g,"-");
+    <a class="piece" href="StadiumVision_Director_Overview_and_Terminology_2-3.pdf" target="_blank" rel="noopener">
+      <div class="num">05</div>
+      <div class="body">
+        <div class="title">StadiumVision Director — Overview &amp; Terminology</div>
+        <div class="desc">A conceptual overview and terminology reference for Cisco StadiumVision Director. Establishes the mental model and shared vocabulary that the rest of the product's documentation depends on.</div>
+        <span class="arrow">→ open pdf</span>
+      </div>
+      <div class="meta">
+        <div><span class="k">type /</span> conceptual</div>
+        <div><span class="k">client /</span> cisco</div>
+        <div><span class="k">format /</span> pdf</div>
+      </div>
+    </a>
 
-  return h("div", {},
-    h("h2", {}, "Inventory"),
-    h("div", { class:"filter-row" },
-      h("input", { type:"text", placeholder:"Search contents, ID, notes…", value: state.search, oninput: e => { state.search = e.target.value; render(); } }),
-      h("select", { onchange: e => { state.filterUnit = e.target.value; render(); } },
-        h("option",{value:"All", selected: state.filterUnit==="All"},"All Units"),
-        ...UNITS.map(u => h("option",{value:u, selected: state.filterUnit===u},"Unit "+u))),
-      h("select", { onchange: e => { state.filterCategory = e.target.value; render(); } },
-        h("option",{value:"All", selected: state.filterCategory==="All"},"All Categories"),
-        ...CATEGORIES.map(c => h("option",{value:c, selected: state.filterCategory===c},c))),
-    ),
-    h("div", { class:"result-count" }, filtered.length + " box" + (filtered.length!==1?"es":"")),
-    filtered.length === 0
-      ? h("div", { class:"empty" }, "No boxes match your filters.")
-      : h("div", { class:"box-list" }, ...filtered.map(box =>
-          h("div", { class:"box-card" },
-            h("div", { class:"box-qr" }, qrImg(boxUrl(box.id), 56)),
-            h("div", { class:"box-center" },
-              h("div", { class:"box-id" }, box.id),
-              h("div", { class:"box-contents" }, box.contents),
-              h("div", { class:"box-meta" },
-                h("span", { class:"tag" }, box.category),
-                h("span", { class: prioClass(box.priority) }, box.priority),
-                box.datePacked ? h("span", { style:"font-size:10px;color:var(--textSub)" }, box.datePacked) : null,
-              ),
-              box.notes ? h("div", { class:"box-notes" }, box.notes) : null,
-            ),
-            h("div", { class:"box-actions" },
-              h("button", { class:"icon-btn", title:"Edit", onclick: () => { state.editingId = box.id; setView("edit"); } }, "✎"),
-              h("button", { class:"icon-btn danger", title:"Delete", onclick: () => {
-                if (confirm("Delete box "+box.id+"? This cannot be undone.")){
-                  state.boxes = state.boxes.filter(b=>b.id!==box.id); saveBoxes(); toast("Deleted "+box.id); render();
-                }
-              }}, "✕"),
-            ),
-          ))),
-  );
-}
+  </div>
+</section>
 
-function renderForm(isEdit){
-  const existing = isEdit ? state.boxes.find(b=>b.id===state.editingId) : null;
-  const draft = {
-    unit: existing?.unit || "A",
-    contents: existing?.contents || "",
-    category: existing?.category || "General",
-    priority: existing?.priority || "Long-term",
-    datePacked: existing?.datePacked || new Date().toISOString().slice(0,10),
-    notes: existing?.notes || "",
-  };
-  const previewId = isEdit ? existing.id : genId(draft.unit, nextNumber(draft.unit));
-  const previewQrHost = h("div", { class:"form-qr" });
-  previewQrHost.append(qrImg(boxUrl(previewId), 140));
-  const previewIdEl = h("div", { class:"form-preview-id" }, previewId);
-  const previewUrlEl = h("div", { class:"form-preview-url" }, boxUrl(previewId));
+<section class="about">
+  <div class="wrap" style="display: contents;">
+    <div class="wrap" style="grid-column: 1; padding: 0;"><h3>About</h3></div>
+    <div class="body wrap" style="grid-column: 2; padding: 0;">
+      <p>I write the documentation that turns complex technical systems into something people can actually use — from rack-mounted hardware to cloud APIs to the SDKs developers build on.</p>
+      <p>The work above spans hardware installation, conceptual overviews, SDK and API reference, and operational playbooks. That breadth is the point: AI systems sit on top of all of it — accelerators, infrastructure, model APIs, and the operational discipline to run them in production. I'm currently focused on bringing 15+ years of that craft to AI and RLHF documentation.</p>
+      <p style="margin-top:32px;font-family:var(--mono);font-size:13px;letter-spacing:0.04em;color:var(--ink);">
+        <span style="color:var(--ink-faint);">email /</span> <a href="mailto:Michael.Morrison.Tech.Writer@gmail.com" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-soft);">Michael.Morrison.Tech.Writer@gmail.com</a><br>
+        <span style="color:var(--ink-faint);">phone /</span> <a href="tel:+14152941061" style="color:var(--ink);text-decoration:none;">415.294.1061</a>
+      </p>
+    </div>
+  </div>
+</section>
 
-  const refreshPreview = () => {
-    const newId = isEdit ? existing.id : genId(draft.unit, nextNumber(draft.unit));
-    previewQrHost.innerHTML = "";
-    previewQrHost.append(qrImg(boxUrl(newId), 140));
-    previewIdEl.textContent = newId;
-    previewUrlEl.textContent = boxUrl(newId);
-  };
+<footer>
+  <div class="wrap" style="display: flex; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 16px;">
+    <div>© Michaela Morrison — Built with HTML, hosted on GitHub Pages</div>
+    <div>
+      <a href="https://github.com/" target="_blank" rel="noopener">github</a>
+      &nbsp;·&nbsp;
+      <a href="https://linkedin.com/" target="_blank" rel="noopener">linkedin</a>
+    </div>
+  </div>
+</footer>
 
-  const unitPicker = h("div", { class:"unit-picker" }, ...UNITS.map(u => {
-    const btn = h("button", { class:"unit-picker-btn" + (draft.unit===u?" active":""),
-      onclick: () => { draft.unit = u; refreshPreview(); [...unitPicker.children].forEach((b,i) => b.classList.toggle("active", UNITS[i]===u)); }
-    }, u, " ", h("span",{class:"unit-picker-count"},"("+(nextNumber(u)-1)+")"));
-    return btn;
-  }));
-
-  return h("div", {},
-    h("h2", {}, isEdit ? "Edit "+existing.id : "Add New Box"),
-    h("div", { class:"form-card" },
-      h("div", { class:"form-preview" }, previewQrHost, previewIdEl, previewUrlEl),
-      !isEdit ? h("div", { class:"field" }, h("label",{},"Storage Unit"), unitPicker) : null,
-      h("div", { class:"field" },
-        h("label",{},"Contents *"),
-        h("input", { type:"text", class:"full", value:draft.contents, placeholder:"Winter coats, photo albums, kitchen appliances…",
-          oninput: e => { draft.contents = e.target.value; } }),
-      ),
-      h("div", { class:"field-row" },
-        h("div", { class:"field" }, h("label",{},"Category"),
-          h("select", { class:"full", onchange: e => { draft.category = e.target.value; } },
-            ...CATEGORIES.map(c => h("option",{value:c, selected: draft.category===c}, c)))),
-        h("div", { class:"field" }, h("label",{},"Priority"),
-          h("select", { class:"full", onchange: e => { draft.priority = e.target.value; } },
-            ...PRIORITIES.map(p => h("option",{value:p, selected: draft.priority===p}, p)))),
-      ),
-      h("div", { class:"field" }, h("label",{},"Date Packed"),
-        h("input", { type:"date", class:"full", value:draft.datePacked, oninput: e => { draft.datePacked = e.target.value; } })),
-      h("div", { class:"field" }, h("label",{},"Notes"),
-        h("textarea", { class:"full", rows:3, placeholder:"Location in unit, fragile items, etc.", oninput: e => { draft.notes = e.target.value; } }, draft.notes)),
-      h("div", { class:"form-actions" },
-        h("button", { class:"btn-secondary", onclick: () => setView("list") }, "Cancel"),
-        h("button", { class:"btn-primary", onclick: () => {
-          if (!draft.contents.trim()) return;
-          if (isEdit){
-            const i = state.boxes.findIndex(b=>b.id===existing.id);
-            state.boxes[i] = Object.assign({}, existing, { contents: draft.contents.trim(), category: draft.category, priority: draft.priority, datePacked: draft.datePacked, notes: draft.notes.trim() });
-            toast("Updated "+existing.id);
-          } else {
-            const num = nextNumber(draft.unit);
-            state.boxes.push({ unit: draft.unit, number: num, id: genId(draft.unit, num), contents: draft.contents.trim(), category: draft.category, priority: draft.priority, datePacked: draft.datePacked, notes: draft.notes.trim(), created: new Date().toISOString() });
-            toast("Added "+genId(draft.unit, num));
-          }
-          saveBoxes(); setView("list");
-        } }, isEdit ? "Save Changes" : "Add Box"),
-      ),
-    ),
-  );
-}
-
-function renderPrint(){
-  const filtered = state.boxes.filter(b => state.filterUnit === "All" || b.unit === state.filterUnit).sort((a,b)=>a.id.localeCompare(b.id));
-  const selSize = state.selectedForPrint.size;
-
-  const doPrint = () => {
-    const selected = state.boxes.filter(b => state.selectedForPrint.has(b.id)).sort((a,b)=>a.id.localeCompare(b.id));
-    if (!selected.length) return;
-    const qrs = selected.map(b => makeQrDataUrl(boxUrl(b.id), 120));
-    const html = '<!DOCTYPE html><html><head><title>Box Labels</title><style>'+
-      '@media print{@page{margin:0.4in;}}'+
-      'body{font-family:"SF Mono",monospace;margin:0;padding:20px;background:#fff;}'+
-      '.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}'+
-      '.label{border:1.5px dashed #999;border-radius:6px;padding:10px;text-align:center;page-break-inside:avoid;}'+
-      '.label img{display:block;margin:0 auto 6px;}'+
-      '.label .id{font-size:18px;font-weight:800;letter-spacing:2px;margin-bottom:2px;}'+
-      '.label .cat{font-size:10px;color:#666;text-transform:uppercase;}'+
-      '.label .desc{font-size:9px;color:#444;margin-top:4px;max-height:28px;overflow:hidden;}'+
-      '.toolbar{position:fixed;top:10px;right:10px;}@media print{.toolbar{display:none;}}'+
-      '</style></head><body>'+
-      '<div class="toolbar"><button onclick="window.print()" style="padding:10px 20px;font-size:14px;">🖨 Print</button></div>'+
-      '<div class="grid">'+ selected.map((b,i)=>
-        '<div class="label"><img src="'+qrs[i]+'" width="120" height="120"/>'+
-        '<div class="id">'+b.id+'</div>'+
-        '<div class="cat">'+b.category+'</div>'+
-        '<div class="desc">'+b.contents.slice(0,60).replace(/</g,"&lt;")+'</div></div>'
-      ).join("") +'</div></body></html>';
-    const w = window.open("", "_blank");
-    if (!w){ toast("⚠ Popup blocked"); return; }
-    w.document.write(html); w.document.close();
-    setTimeout(()=>{ try{ w.focus(); w.print(); }catch(e){} }, 400);
-  };
-
-  return h("div", {},
-    h("h2", {}, "Print Labels"),
-    h("p", { class:"help-text" }, "Select boxes, then print. Scanning a printed label with iPhone Camera opens this app directly to that box."),
-    h("div", { class:"filter-row" },
-      h("select", { onchange: e => { state.filterUnit = e.target.value; render(); } },
-        h("option",{value:"All", selected:state.filterUnit==="All"},"All Units"),
-        ...UNITS.map(u => h("option",{value:u, selected:state.filterUnit===u},"Unit "+u))),
-      h("button", { class:"btn-secondary", onclick: () => {
-        const allSelected = filtered.every(b => state.selectedForPrint.has(b.id));
-        filtered.forEach(b => allSelected ? state.selectedForPrint.delete(b.id) : state.selectedForPrint.add(b.id));
-        render();
-      }}, "Toggle All"),
-      h("button", Object.assign({ class:"btn-primary", onclick: doPrint }, selSize===0 ? {disabled:true} : {}), "Print "+selSize+" Label"+(selSize!==1?"s":"")),
-    ),
-    h("div", { class:"label-grid" }, ...filtered.map(box => {
-      const sel = state.selectedForPrint.has(box.id);
-      return h("div", { class:"label-card"+(sel?" selected":""), onclick: () => {
-        sel ? state.selectedForPrint.delete(box.id) : state.selectedForPrint.add(box.id);
-        render();
-      }},
-        h("div",{class:"label-check"}, sel?"☑":"☐"),
-        h("div",{class:"label-qr"}, qrImg(boxUrl(box.id), 100)),
-        h("div",{class:"label-id"}, box.id),
-        h("div",{class:"label-cat"}, box.category),
-      );
-    })),
-  );
-}
-
-function renderScan(){
-  const lookup = () => {
-    const id = state.lookupId.trim().toUpperCase();
-    const found = state.boxes.find(b => b.id === id);
-    state.lookupResult = found || "not_found";
-    render();
-  };
-
-  return h("div", {},
-    h("h2", {}, "Scan & Lookup"),
-    h("div", { class:"scan-card" },
-      h("div", { class:"scan-icon" }, "📷"),
-      h("h3", { style:"margin-top:0" }, "Scan with iPhone Camera"),
-      h("ol", {},
-        h("li", {}, "Open your iPhone Camera app"),
-        h("li", {}, "Point it at any box's QR code label"),
-        h("li", {}, "Tap the yellow link notification"),
-        h("li", {}, "This app opens directly to that box"),
-      ),
-      h("p", { class:"help-text" }, "Or type a box ID to look it up:"),
-      h("div", { class:"lookup-row" },
-        h("input", { type:"text", placeholder:"e.g. A-001", value: state.lookupId,
-          oninput: e => { state.lookupId = e.target.value.toUpperCase(); },
-          onkeydown: e => { if (e.key === "Enter") lookup(); } }),
-        h("button", { class:"btn-primary", onclick: lookup }, "Look Up"),
-      ),
-      state.lookupResult === "not_found" ? h("div", { class:"lookup-not-found" }, "No box found with ID \""+state.lookupId+"\"") : null,
-      (state.lookupResult && state.lookupResult !== "not_found") ? h("div", { class:"lookup-found" },
-        h("div", { class:"lookup-header" },
-          h("div", { class:"lookup-qr" }, qrImg(boxUrl(state.lookupResult.id), 72)),
-          h("div", {},
-            h("div", { class:"box-id" }, state.lookupResult.id),
-            h("div", { class:"box-contents" }, state.lookupResult.contents),
-          )),
-        h("div", { class:"lookup-details" },
-          h("div", {}, h("strong",{},"Unit: "), state.lookupResult.unit),
-          h("div", {}, h("strong",{},"Category: "), state.lookupResult.category),
-          h("div", {}, h("strong",{},"Priority: "), state.lookupResult.priority),
-          state.lookupResult.datePacked ? h("div", {}, h("strong",{},"Packed: "), state.lookupResult.datePacked) : null,
-          state.lookupResult.notes ? h("div", { style:"grid-column:1/-1" }, h("strong",{},"Notes: "), state.lookupResult.notes) : null,
-        ),
-        h("button", { class:"btn-secondary", onclick: () => { state.editingId = state.lookupResult.id; setView("edit"); } }, "Edit This Box"),
-      ) : null,
-    ),
-  );
-}
-
-function renderBackup(){
-  const exportJson = () => {
-    const data = JSON.stringify({ version: 1, exported: new Date().toISOString(), boxes: state.boxes }, null, 2);
-    const blob = new Blob([data], { type:"application/json" });
-    downloadBlob(blob, "boxvault-backup-"+new Date().toISOString().slice(0,10)+".json");
-    toast("JSON exported");
-  };
-  const exportCsv = () => {
-    const headers = ["id","unit","number","contents","category","priority","datePacked","notes","created"];
-    const esc = v => { const s = String(v??""); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; };
-    const rows = [headers.join(","), ...state.boxes.map(b => headers.map(hd => esc(b[hd])).join(","))];
-    const blob = new Blob([rows.join("\n")], { type:"text/csv" });
-    downloadBlob(blob, "boxvault-backup-"+new Date().toISOString().slice(0,10)+".csv");
-    toast("CSV exported");
-  };
-  const downloadBlob = (blob, name) => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a"); a.href = url; a.download = name; a.click();
-    URL.revokeObjectURL(url);
-  };
-  const importJson = (e) => {
-    const file = e.target.files?.[0]; if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      try {
-        const parsed = JSON.parse(ev.target.result);
-        const imported = Array.isArray(parsed) ? parsed : parsed.boxes;
-        if (!Array.isArray(imported)) throw new Error("Invalid format");
-        if (!confirm("Replace current inventory with "+imported.length+" imported box(es)?")) return;
-        state.boxes = imported; saveBoxes(); toast("Imported "+imported.length+" boxes"); render();
-      } catch(err){ toast("⚠ Invalid backup file"); }
-      e.target.value = "";
-    };
-    reader.readAsText(file);
-  };
-
-  return h("div", {},
-    h("h2", {}, "Backup & Restore"),
-    h("div", { class:"scan-card" },
-      h("div", { class:"scan-icon" }, "💾"),
-      h("h3", { style:"margin-top:0" }, "Export Your Data"),
-      h("p", { class:"help-text" }, "You currently have ", h("strong",{}, String(state.boxes.length)), " box"+(state.boxes.length!==1?"es":"")+" saved. Download a backup to iCloud Drive, Dropbox, or email."),
-      h("div", { style:"display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;" },
-        h("button", Object.assign({ class:"btn-primary", onclick: exportJson }, state.boxes.length===0 ? {disabled:true} : {}), "⬇ Export JSON"),
-        h("button", Object.assign({ class:"btn-secondary", onclick: exportCsv }, state.boxes.length===0 ? {disabled:true} : {}), "⬇ Export CSV"),
-      ),
-      h("h3", { style:"margin-top:12px" }, "Restore from JSON"),
-      h("p", { class:"help-text" }, "Import a previously-exported JSON file. This replaces your current inventory."),
-      h("input", { type:"file", accept:".json,application/json", onchange: importJson, style:"max-width:400px;" }),
-      h("p", { class:"help-text", style:"margin-top:20px;font-size:11px;" }, "💡 CSV opens in Numbers or Excel. JSON restores into this app."),
-    ),
-  );
-}
-
-/* ─── Render dispatcher ─── */
-function render(){
-  renderNav();
-  const main = $("#main"); main.innerHTML = "";
-  let view;
-  switch (state.view){
-    case "dashboard": view = renderDashboard(); break;
-    case "list": view = renderList(); break;
-    case "add": view = renderForm(false); break;
-    case "edit": view = renderForm(true); break;
-    case "print": view = renderPrint(); break;
-    case "scan": view = renderScan(); break;
-    case "backup": view = renderBackup(); break;
-    default: view = renderDashboard();
-  }
-  main.append(view);
-}
-
-/* ─── Deep link handling ─── */
-function handleDeepLink(){
-  const params = new URLSearchParams(location.search);
-  const id = params.get("id");
-  if (id){
-    state.lookupId = id.toUpperCase();
-    const found = state.boxes.find(b => b.id === state.lookupId);
-    state.lookupResult = found || "not_found";
-    state.view = "scan";
-    // Clean URL so reloads don't re-trigger
-    history.replaceState({}, "", location.pathname);
-  }
-}
-
-/* ─── Boot ─── */
-document.querySelector(".logo").addEventListener("click", () => setView("dashboard"));
-loadBoxes();
-handleDeepLink();
-
-// Wait for QR library to load before first render
-function waitForQr(retries = 50){
-  if (typeof window.qrcode === "function") { render(); return; }
-  if (retries <= 0) { toast("⚠ QR library failed to load — offline?"); render(); return; }
-  setTimeout(() => waitForQr(retries - 1), 100);
-}
-waitForQr();
-</script>
 </body>
 </html>
